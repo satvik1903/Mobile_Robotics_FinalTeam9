@@ -1,0 +1,235 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="cbf_demo">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    
+    <light type="directional" name="sun">
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+    </light>
+    
+    <!-- Ground Plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>10 10</size></plane></geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Start Markers -->
+    <model name="start_blue">
+      <static>true</static>
+      <pose>0 0 0.005 0 0 0</pose>
+      <link name="marker">
+        <visual name="v">
+          <geometry><cylinder><radius>0.3</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>0 0.3 1 0.6</ambient><diffuse>0 0.5 1 0.6</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="start_red">
+      <static>true</static>
+      <pose>3 0 0.005 0 0 0</pose>
+      <link name="marker">
+        <visual name="v">
+          <geometry><cylinder><radius>0.3</radius><length>0.01</length></cylinder></geometry>
+          <material><ambient>1 0.2 0.2 0.6</ambient><diffuse>1 0.3 0.3 0.6</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Goal Markers -->
+    <model name="goal_blue">
+      <static>true</static>
+      <pose>3 3 0 0 0 0</pose>
+      <link name="marker">
+        <visual name="pole">
+          <pose>0 0 0.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.03</radius><length>0.5</length></cylinder></geometry>
+          <material><ambient>0.4 0.4 0.4 1</ambient></material>
+        </visual>
+        <visual name="flag">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><sphere><radius>0.15</radius></sphere></geometry>
+          <material><ambient>0 0.3 1 1</ambient><diffuse>0 0.5 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="goal_red">
+      <static>true</static>
+      <pose>0 3 0 0 0 0</pose>
+      <link name="marker">
+        <visual name="pole">
+          <pose>0 0 0.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.03</radius><length>0.5</length></cylinder></geometry>
+          <material><ambient>0.4 0.4 0.4 1</ambient></material>
+        </visual>
+        <visual name="flag">
+          <pose>0 0 0.55 0 0 0</pose>
+          <geometry><sphere><radius>0.15</radius></sphere></geometry>
+          <material><ambient>1 0.2 0.2 1</ambient><diffuse>1 0.3 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- BLUE ROBOT -->
+    <model name="robot0">
+      <pose>0 0 0.05 0 0 0</pose>
+      <self_collide>false</self_collide>
+      
+      <link name="base_link">
+        <inertial>
+          <mass>1.0</mass>
+          <inertia>
+            <ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz>
+          </inertia>
+        </inertial>
+        
+        <visual name="body">
+          <geometry><cylinder><radius>0.18</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>0 0.3 1 1</ambient><diffuse>0 0.5 1 1</diffuse></material>
+        </visual>
+        
+        <visual name="top">
+          <pose>0 0 0.05 0 0 0</pose>
+          <geometry><cylinder><radius>0.12</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>0.2 0.5 1 1</ambient><diffuse>0.3 0.6 1 1</diffuse></material>
+        </visual>
+        
+        <visual name="lidar_housing">
+          <pose>0 0 0.08 0 0 0</pose>
+          <geometry><cylinder><radius>0.04</radius><length>0.04</length></cylinder></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        
+        <collision name="collision">
+          <geometry><cylinder><radius>0.18</radius><length>0.08</length></cylinder></geometry>
+        </collision>
+        
+        <sensor name="lidar" type="gpu_lidar">
+          <pose>0 0 0.1 0 0 0</pose>
+          <topic>robot0/scan</topic>
+          <update_rate>10</update_rate>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.14159</min_angle>
+                <max_angle>3.14159</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.1</min>
+              <max>5.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </lidar>
+          <visualize>true</visualize>
+        </sensor>
+      </link>
+      
+      <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+        <odom_frame>odom</odom_frame>
+        <robot_base_frame>robot0/base_link</robot_base_frame>
+        <odom_publish_frequency>50</odom_publish_frequency>
+        <odom_topic>robot0/odom</odom_topic>
+      </plugin>
+      
+      <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
+        <topic>robot0/cmd_vel</topic>
+      </plugin>
+    </model>
+    
+    <!-- RED ROBOT -->
+    <model name="robot1">
+      <pose>3 0 0.05 0 0 0</pose>
+      <self_collide>false</self_collide>
+      
+      <link name="base_link">
+        <inertial>
+          <mass>1.0</mass>
+          <inertia>
+            <ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz>
+          </inertia>
+        </inertial>
+        
+        <visual name="body">
+          <geometry><cylinder><radius>0.18</radius><length>0.08</length></cylinder></geometry>
+          <material><ambient>1 0.2 0.2 1</ambient><diffuse>1 0.3 0.3 1</diffuse></material>
+        </visual>
+        
+        <visual name="top">
+          <pose>0 0 0.05 0 0 0</pose>
+          <geometry><cylinder><radius>0.12</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>1 0.4 0.4 1</ambient><diffuse>1 0.5 0.5 1</diffuse></material>
+        </visual>
+        
+        <visual name="lidar_housing">
+          <pose>0 0 0.08 0 0 0</pose>
+          <geometry><cylinder><radius>0.04</radius><length>0.04</length></cylinder></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient></material>
+        </visual>
+        
+        <collision name="collision">
+          <geometry><cylinder><radius>0.18</radius><length>0.08</length></cylinder></geometry>
+        </collision>
+        
+        <sensor name="lidar" type="gpu_lidar">
+          <pose>0 0 0.1 0 0 0</pose>
+          <topic>robot1/scan</topic>
+          <update_rate>10</update_rate>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.14159</min_angle>
+                <max_angle>3.14159</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.1</min>
+              <max>5.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </lidar>
+          <visualize>true</visualize>
+        </sensor>
+      </link>
+      
+      <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+        <odom_frame>odom</odom_frame>
+        <robot_base_frame>robot1/base_link</robot_base_frame>
+        <odom_publish_frequency>50</odom_publish_frequency>
+        <odom_topic>robot1/odom</odom_topic>
+      </plugin>
+      
+      <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl">
+        <topic>robot1/cmd_vel</topic>
+      </plugin>
+    </model>
+    
+  </world>
+</sdf>
